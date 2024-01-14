@@ -22,15 +22,17 @@ function App (){
     
      function getWeather() {
   
-    
-     fetch('http://api.weatherstack.com/current?access_key=a88cb686076f991d1d73ad1dc889f201&query=bangalore')
-      .then(response => {
-        const result = response.json();
-        console.log(city)
-    console.log(result) 
-     }).catch(error => {
-        console.log(error);
-      });
+      const options = {method: 'GET', headers: {accept: 'application/json'}};
+
+      fetch('https://api.tomorrow.io/v4/weather/realtime?location=toronto&apikey=LPUlX8S6smN9rq5OBbrQuhh489UHkqih', options)
+        .then(response => {
+
+          const result = response.json()
+          setCity(result.location.name)
+          console.log(city)
+        })
+        .then(response => console.log(response))
+        .catch(err => console.error(err));
     
     
     }
