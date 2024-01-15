@@ -1,10 +1,6 @@
 import { useState } from "react"
-
+import Swal from 'sweetalert2'
 const key = import.meta.env.VITE_KEY
-
-
-
-
 
 function App() {
 
@@ -14,49 +10,42 @@ function App() {
   const [city, setCity] = useState()
   const [pre, setPre] = useState()
   const [dis, setDis] = useState(false)
-  const [wi,setWi] = useState()
-
+  const [cod, setCod] = useState()
+  const [city1, setCity1] = useState()
   const getName = (e) => {
     setDis(false)
-    setCity(e.target.value)
+    setCity1(e.target.value)
   }
 
   async function getWeather() {
 
     setDis(true)
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${key}`)
-      .catch(err => { alert("Error..") })
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city1}&units=metric&appid=${key}`)
     var data = await response.json()
-
-    console.log(data)
-    setPre(data.main.pressure)
-    setCity(data.name)
-    setHumid(data.main.humidity)
-    setTemp(data.main.temp)
-    setWind(data.wind.speed)
-
-
-    if (data.weather[0].main == "Clouds"){
-      setWi("/clouds.png")
+    if (response.status != 404) {
+      setPre(data.main.pressure)
+      setCity(data.name)
+      setHumid(data.main.humidity)
+      setTemp(data.main.temp)
+      setWind(data.wind.speed)
+      setCod(data.weather[0].icon)
     }
-    else if(data.weather[0].main == "Clear"){
-      setWi("/clear.png")
-    }
-    else if(data.weather[0].main == "Rain"){
-      setWi("/rain.png")
-    }
-
-    else if(data.weather[0].main == "Drizzle"){
-      setWi("/drizzle.png")
-    }
-    else if(data.weather[0].main == "Mist"){
-      setWi("/mist.png")
-    }
-    else if(data.weather[0].main == "Snow"){
-      setWi("/snow.png")
-    }
+    else {
+      setDis(false)
+      Swal.fire({
+        icon: "error",
+        title: `shit.."${city1}" is not a city`,
+        text: "Enter a valid city name :)",
+      });
+      setPre("")
+      setCity("")
+      setHumid("")
+      setTemp("")
+      setWind("")
+      setCod("")
 
     }
+  }
 
   return (
     <div className=" bg-black w-screen h-screen flex flex-row justify-center ">
@@ -68,7 +57,7 @@ function App() {
           </div>
           <div className="absolute  h-[348px] top-[234px] left-[362px]">
 
-            <img className="flex w-[224px] h-[224px] mt-[80px] ml-[5px] left-[30px]" src={dis? wi : "/blank.png"} />
+            <img className="flex w-[224px] h-[224px] mt-[80px] ml-[5px] left-[30px]" src={dis ? `https://openweathermap.org/img/wn/${cod}@2x.png` : "/blank.png"} />
             <div className="absolute w-[198px] top-[310px] left-[24px] font-mono font-normal text-white text-[50px] text-center tracking-[0] leading-[normal]">
               {dis ? `${temp}°C` : ""}
             </div>
